@@ -1,0 +1,9 @@
+{
+  "name": "@native-ts/common",
+  "private": false,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "repository": "git@github.com:native-ts/react-native-common.git",
+  "author": "Canh Nguyen <ngvcanh.dev@gmail.com>",
+  "license": "MIT"
+}
