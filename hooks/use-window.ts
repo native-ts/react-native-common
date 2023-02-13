@@ -1,41 +1,38 @@
 import { useEffect, useState } from "react";
 import { Dimensions, ScaledSize } from "react-native";
 
-export interface UseWindowState{
-  width: number;
-  height: number;
+export interface UseWindowState extends ScaledSize{
   orientation: 'horizontal' | 'vertical';
 }
 
-export interface WindowChangeLayout{
-  window: ScaledSize;
-  screen: ScaledSize;
-}
-
-const { width, height } = Dimensions.get('window');
-
 export default function useWindow(): UseWindowState {
 
-    const [ windowWidth, setWindowWidth ] = useState(width);
-    const [ windowHeight, setWindowHeight ] = useState(height);
+  const [dimension, setDimension] = useState(Dimensions.get('window'));
 
-    useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change', 
-        ({ window }: WindowChangeLayout) => {
-          window.width === windowWidth || setWindowWidth(window.width);
-          window.height === windowHeight || setWindowHeight(window.height);
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener(
+      'change', 
+      ({ window }: { window: ScaledSize }) => {
+        if (
+          window.fontScale !== dimension.fontScale ||
+          window.height !== dimension.height ||
+          window.scale !== dimension.scale ||
+          window.width !== dimension.width
+        ) {
+          setDimension(window);
         }
-      );
-
-      return () => {
-        subscription.remove();
       }
-    });
+    );
 
-    return {
-      width: windowWidth,
-      height: windowHeight,
-      orientation: width > height ? 'horizontal' : 'vertical'
+    return () => {
+      subscription.remove();
     }
+  });
+
+  return {
+    ...dimension,
+    orientation: dimension.width > dimension.height
+      ? 'horizontal'
+      : 'vertical'
+  }
 };
